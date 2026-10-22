@@ -1,8 +1,12 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 
-export default function PaginaProduto({ produtos, onAdicionar }) {
+export default function PaginaProduto({ produtos, onAdicionar, onRegistrarAviso }) {
   const { id } = useParams()
   const produto = produtos.find((item) => item.id === id)
+  const [nomeAviso, setNomeAviso] = useState('')
+  const [emailAviso, setEmailAviso] = useState('')
+  const [mensagemAviso, setMensagemAviso] = useState('')
 
   if (!produto) {
     return (
@@ -16,9 +20,28 @@ export default function PaginaProduto({ produtos, onAdicionar }) {
   }
 
   const precoValido = Number.isFinite(Number(produto?.price))
+  const esgotado = produto.estoque === 0
   const relacionados = produtos
-    .filter((item) => item.category === produto.category && item.id !== produto.id)
+    .filter((item) => item.category === produto.category && item.id !== produto.id && item.estoque > 0)
     .slice(0, 4)
+
+  function enviarAviso(evento) {
+    evento.preventDefault()
+
+    if (!nomeAviso.trim() || !emailAviso.trim()) {
+      setMensagemAviso('Preencha nome e e-mail para receber o aviso.')
+      return
+    }
+
+    onRegistrarAviso(produto.id, {
+      nome: nomeAviso.trim(),
+      email: emailAviso.trim(),
+    })
+
+    setMensagemAviso('Você foi cadastrado para receber o aviso quando o produto voltar.')
+    setNomeAviso('')
+    setEmailAviso('')
+  }
 
   return (
     <section>
@@ -47,10 +70,37 @@ export default function PaginaProduto({ produtos, onAdicionar }) {
           <button
             className="botao botao-grande"
             onClick={() => onAdicionar(produto)}
-            disabled={produto.estoque === 0 || !precoValido}
+            disabled={esgotado || !precoValido}
           >
             {precoValido ? 'Adicionar ao carrinho' : 'Indisponível'}
           </button>
+
+          {esgotado && (
+            <form onSubmit={enviarAviso} className="cupom" style={{ marginTop: '1rem' }}>
+              <label htmlFor="nome-aviso" className="rotulo">
+                Receber aviso quando o produto voltar
+              </label>
+              <input
+                id="nome-aviso"
+                value={nomeAviso}
+                onChange={(evento) => setNomeAviso(evento.target.value)}
+                placeholder="Seu nome"
+                style={{ display: 'block', marginBottom: '0.5rem', width: '100%' }}
+              />
+              <input
+                type="email"
+                value={emailAviso}
+                onChange={(evento) => setEmailAviso(evento.target.value)}
+                placeholder="Seu e-mail"
+                style={{ display: 'block', marginBottom: '0.5rem', width: '100%' }}
+              />
+              <button type="submit" className="botao botao-secundario">
+                Avise-me
+              </button>
+            </form>
+          )}
+
+          {mensagemAviso && <p className="aviso">{mensagemAviso}</p>}
 
           <ul className="detalhe-garantias">
             <li>Troca grátis em até 30 dias</li>

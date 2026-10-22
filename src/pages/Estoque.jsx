@@ -1,7 +1,16 @@
 // Página usada pelo time de estoque para acompanhar a quantidade de cada produto
-export default function Estoque({ produtos }) {
+export default function Estoque({ produtos, listaEspera = [] }) {
   // slice cria uma cópia, para o sort não alterar a lista original
   const ordenados = produtos.slice().sort((a, b) => a.estoque - b.estoque)
+
+  const pessoasPorProduto = listaEspera.reduce((acumulador, registro) => {
+    const chave = registro.produtoId
+    acumulador[chave] = acumulador[chave] || []
+    acumulador[chave].push(registro)
+    return acumulador
+  }, {})
+
+  const produtosComEspera = produtos.filter((produto) => pessoasPorProduto[produto.id]?.length)
 
   return (
     <section>
@@ -37,6 +46,35 @@ export default function Estoque({ produtos }) {
           </tbody>
         </table>
       </div>
+
+      <h2>Lista de espera</h2>
+
+      {produtosComEspera.length === 0 ? (
+        <p className="aviso">Nenhum cliente está esperando reposição no momento.</p>
+      ) : (
+        <div className="tabela-moldura">
+          <table className="tabela">
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+              </tr>
+            </thead>
+            <tbody>
+              {produtosComEspera.flatMap((produto) =>
+                (pessoasPorProduto[produto.id] || []).map((registro) => (
+                  <tr key={`${produto.id}-${registro.id}`}>
+                    <td>{produto.title}</td>
+                    <td>{registro.nome}</td>
+                    <td>{registro.email}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </section>
   )
 }
