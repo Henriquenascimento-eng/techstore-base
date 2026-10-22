@@ -4,9 +4,10 @@ import { formatarPreco } from '../utils/formatarPreco'
 export default function SugestaoItem({ produto, onAdicionar }) {
   const [adicionando, setAdicionando] = useState(false)
   const precoValido = Number.isFinite(Number(produto?.price))
+  const podeAdicionar = precoValido && produto.estoque > 0 && !adicionando
 
   function handleAdicionar() {
-    if (!precoValido || produto.estoque === 0 || adicionando) return
+    if (!podeAdicionar) return
 
     setAdicionando(true)
     onAdicionar(produto)
@@ -26,9 +27,10 @@ export default function SugestaoItem({ produto, onAdicionar }) {
         <p className="preco preco-pequeno">{formatarPreco(produto.price)}</p>
       </div>
       <button
+        type="button"
         className="botao botao-pequeno"
         onClick={handleAdicionar}
-        disabled={!precoValido || produto.estoque === 0 || adicionando}
+        disabled={!podeAdicionar}
       >
         {adicionando ? 'Adicionando...' : precoValido ? 'Comprar' : 'Indisponível'}
       </button>
