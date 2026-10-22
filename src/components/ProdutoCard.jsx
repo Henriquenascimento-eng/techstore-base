@@ -1,10 +1,23 @@
+import { useState } from 'react'
 import { Link } from 'react-router'
 import { formatarPreco } from '../utils/formatarPreco'
 
 export default function ProdutoCard({ produto, onAdicionar }) {
+  const [adicionando, setAdicionando] = useState(false)
   const esgotado = produto.estoque === 0
   const precoValido = Number.isFinite(Number(produto?.price))
   const bloqueado = esgotado || !precoValido
+
+  function handleAdicionar() {
+    if (bloqueado || adicionando) return
+
+    setAdicionando(true)
+    onAdicionar(produto)
+
+    window.setTimeout(() => {
+      setAdicionando(false)
+    }, 300)
+  }
 
   return (
     <article className="card">
@@ -32,8 +45,8 @@ export default function ProdutoCard({ produto, onAdicionar }) {
         {!precoValido && <span className="selo selo-alerta">Sem preço</span>}
       </div>
 
-      <button className="botao" onClick={() => onAdicionar(produto)} disabled={bloqueado}>
-        {precoValido ? 'Adicionar ao carrinho' : 'Indisponível'}
+      <button className="botao" onClick={handleAdicionar} disabled={bloqueado || adicionando}>
+        {adicionando ? 'Adicionando...' : precoValido ? 'Adicionar ao carrinho' : 'Indisponível'}
       </button>
     </article>
   )

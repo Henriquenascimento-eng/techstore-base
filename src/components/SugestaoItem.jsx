@@ -1,7 +1,20 @@
+import { useState } from 'react'
 import { formatarPreco } from '../utils/formatarPreco'
 
 export default function SugestaoItem({ produto, onAdicionar }) {
+  const [adicionando, setAdicionando] = useState(false)
   const precoValido = Number.isFinite(Number(produto?.price))
+
+  function handleAdicionar() {
+    if (!precoValido || produto.estoque === 0 || adicionando) return
+
+    setAdicionando(true)
+    onAdicionar(produto)
+
+    window.setTimeout(() => {
+      setAdicionando(false)
+    }, 300)
+  }
 
   return (
     <div className="sugestao">
@@ -14,10 +27,10 @@ export default function SugestaoItem({ produto, onAdicionar }) {
       </div>
       <button
         className="botao botao-pequeno"
-        onClick={() => onAdicionar(produto)}
-        disabled={!precoValido || produto.estoque === 0}
+        onClick={handleAdicionar}
+        disabled={!precoValido || produto.estoque === 0 || adicionando}
       >
-        {precoValido ? 'Comprar' : 'Indisponível'}
+        {adicionando ? 'Adicionando...' : precoValido ? 'Comprar' : 'Indisponível'}
       </button>
     </div>
   )

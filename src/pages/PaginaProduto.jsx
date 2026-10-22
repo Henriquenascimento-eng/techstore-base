@@ -7,6 +7,7 @@ export default function PaginaProduto({ produtos, onAdicionar, onRegistrarAviso 
   const [nomeAviso, setNomeAviso] = useState('')
   const [emailAviso, setEmailAviso] = useState('')
   const [mensagemAviso, setMensagemAviso] = useState('')
+  const [produtoAdicionandoId, setProdutoAdicionandoId] = useState(null)
 
   if (!produto) {
     return (
@@ -43,6 +44,19 @@ export default function PaginaProduto({ produtos, onAdicionar, onRegistrarAviso 
     setEmailAviso('')
   }
 
+  function handleAdicionar(item) {
+    if (item.estoque === 0 || !Number.isFinite(Number(item.price)) || produtoAdicionandoId === item.id) {
+      return
+    }
+
+    setProdutoAdicionandoId(item.id)
+    onAdicionar(item)
+
+    window.setTimeout(() => {
+      setProdutoAdicionandoId(null)
+    }, 300)
+  }
+
   return (
     <section>
       <nav className="trilha" aria-label="Você está em">
@@ -69,10 +83,14 @@ export default function PaginaProduto({ produtos, onAdicionar, onRegistrarAviso 
 
           <button
             className="botao botao-grande"
-            onClick={() => onAdicionar(produto)}
-            disabled={esgotado || !precoValido}
+            onClick={() => handleAdicionar(produto)}
+            disabled={esgotado || !precoValido || produtoAdicionandoId === produto.id}
           >
-            {precoValido ? 'Adicionar ao carrinho' : 'Indisponível'}
+            {produtoAdicionandoId === produto.id
+              ? 'Adicionando...'
+              : precoValido
+                ? 'Adicionar ao carrinho'
+                : 'Indisponível'}
           </button>
 
           {esgotado && (
@@ -126,10 +144,14 @@ export default function PaginaProduto({ produtos, onAdicionar, onRegistrarAviso 
             </p>
             <button
               className="botao"
-              onClick={() => onAdicionar(item)}
-              disabled={!Number.isFinite(Number(item.price)) || item.estoque === 0}
+              onClick={() => handleAdicionar(item)}
+              disabled={!Number.isFinite(Number(item.price)) || item.estoque === 0 || produtoAdicionandoId === item.id}
             >
-              {Number.isFinite(Number(item.price)) ? 'Adicionar ao carrinho' : 'Indisponível'}
+              {produtoAdicionandoId === item.id
+                ? 'Adicionando...'
+                : Number.isFinite(Number(item.price))
+                  ? 'Adicionar ao carrinho'
+                  : 'Indisponível'}
             </button>
           </article>
         ))}

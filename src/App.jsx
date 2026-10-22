@@ -32,14 +32,16 @@ export default function App() {
   }, [])
 
   function adicionarAoCarrinho(produto) {
-    setCarrinho(carrinho.concat(produto))
+    if (!produto) return
+
+    setCarrinho((anterior) => anterior.concat(produto))
   }
 
   function removerUmaUnidade(produtoId) {
     // Remove só a primeira unidade encontrada do produto
     let removido = false
-    setCarrinho(
-      carrinho.filter((produto) => {
+    setCarrinho((anterior) =>
+      anterior.filter((produto) => {
         if (!removido && produto.id === produtoId) {
           removido = true
           return false

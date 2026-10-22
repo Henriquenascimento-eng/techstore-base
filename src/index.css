@@ -218,6 +218,7 @@ h2 {
 }
 
 .mini-carrinho {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--espaco-2);
@@ -230,6 +231,25 @@ h2 {
 
 .mini-carrinho:hover {
   border-color: var(--cor-texto);
+}
+
+.mini-carrinho-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--cor-destaque);
+  color: var(--cor-branco);
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 0 0 2px var(--cor-superficie);
 }
 
 .mini-carrinho-icone {
@@ -395,7 +415,7 @@ h2 {
   font-size: 0.85rem;
 }
 
-.preco-original + .preco {
+.preco-original+.preco {
   color: var(--cor-destaque);
 }
 
@@ -622,7 +642,7 @@ h2 {
   padding: var(--espaco-4);
 }
 
-.item-carrinho + .item-carrinho {
+.item-carrinho+.item-carrinho {
   border-top: 1px solid var(--cor-borda);
 }
 
@@ -788,6 +808,60 @@ h2 {
 }
 
 /* Estoque */
+
+.dashboard-lojista {
+  display: grid;
+  gap: var(--espaco-6);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--espaco-4);
+}
+
+.dashboard-card {
+  display: grid;
+  gap: var(--espaco-2);
+  padding: var(--espaco-5);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+}
+
+.dashboard-card span {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cor-texto-suave);
+  font-weight: 700;
+}
+
+.dashboard-card strong {
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.dashboard-card small {
+  color: var(--cor-texto-suave);
+  font-size: 0.8rem;
+}
+
+.dashboard-card-destaque {
+  background: linear-gradient(135deg, var(--cor-marca), #2d2f36);
+  color: #fff;
+  border-color: transparent;
+}
+
+.dashboard-card-destaque span,
+.dashboard-card-destaque small {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.tabela-dashboard {
+  margin-top: var(--espaco-1);
+}
 
 .tabela-moldura {
   overflow-x: auto;
