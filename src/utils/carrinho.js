@@ -3,10 +3,12 @@
 
 export function calcularTotal(carrinho) {
   return carrinho.reduce((total, produto) => {
-    const preco = Number(produto.price)
+    const preco = Number(produto?.price)
+
     if (!Number.isFinite(preco)) {
       return total
     }
+
     return total + preco
   }, 0)
 }
@@ -15,9 +17,7 @@ export function agruparItens(carrinho) {
   const itens = []
 
   carrinho.forEach((produto) => {
-    const existente = itens.find(
-      (item) => item.produto.id === produto.id
-    )
+    const existente = itens.find((item) => item.produto.id === produto.id)
 
     if (existente) {
       existente.quantidade += 1

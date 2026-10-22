@@ -15,6 +15,7 @@ export default function PaginaProduto({ produtos, onAdicionar }) {
     )
   }
 
+  const precoValido = Number.isFinite(Number(produto?.price))
   const relacionados = produtos
     .filter((item) => item.category === produto.category && item.id !== produto.id)
     .slice(0, 4)
@@ -37,16 +38,18 @@ export default function PaginaProduto({ produtos, onAdicionar }) {
           <p className="card-avaliacao">
             ★ {produto.rating.rate} <span>({produto.rating.count} avaliações)</span>
           </p>
-          <p className="detalhe-preco">R$ {produto.price.toFixed(2).replace('.', ',')}</p>
+          <p className="detalhe-preco">
+            {precoValido ? `R$ ${Number(produto.price).toFixed(2).replace('.', ',')}` : 'Preço indisponível'}
+          </p>
           <p className="detalhe-descricao">{produto.description}</p>
           <p className="detalhe-estoque">{produto.estoque} unidades disponíveis</p>
 
           <button
             className="botao botao-grande"
             onClick={() => onAdicionar(produto)}
-            disabled={produto.estoque === 0}
+            disabled={produto.estoque === 0 || !precoValido}
           >
-            Adicionar ao carrinho
+            {precoValido ? 'Adicionar ao carrinho' : 'Indisponível'}
           </button>
 
           <ul className="detalhe-garantias">
@@ -66,9 +69,17 @@ export default function PaginaProduto({ produtos, onAdicionar }) {
               </div>
               <h3 className="card-titulo">{item.title}</h3>
             </Link>
-            <p className="preco">R$ {Number(item.price).toFixed(2).replace('.', ',')}</p>
-            <button className="botao" onClick={() => onAdicionar(item)}>
-              Adicionar ao carrinho
+            <p className="preco">
+              {Number.isFinite(Number(item.price))
+                ? `R$ ${Number(item.price).toFixed(2).replace('.', ',')}`
+                : 'Preço indisponível'}
+            </p>
+            <button
+              className="botao"
+              onClick={() => onAdicionar(item)}
+              disabled={!Number.isFinite(Number(item.price)) || item.estoque === 0}
+            >
+              {Number.isFinite(Number(item.price)) ? 'Adicionar ao carrinho' : 'Indisponível'}
             </button>
           </article>
         ))}
